@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import special
 
-class model:
+class Montecarlo:
 
     def __init__(self, nr_steps, anti, disc_model, K, T, gamma, r, sigma):
         self.anti = anti

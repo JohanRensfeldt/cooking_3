@@ -3,7 +3,7 @@ import scipy.special as sp
 import matplotlib.pyplot as plt
 import time as time
 
-class OptionPricing:
+class OptionPricingExplicit:
     def __init__(self, K, s0, S_max, T, r, sigma, M, N):
         self.K = K
         self.s0 = s0
@@ -53,7 +53,7 @@ class OptionPricing:
         plt.plot(N_array, error_array)
         plt.show()
 
-class FDMOptionPricing:
+class OptionPricingImplicit:
     def __init__(self, K, s0, S_max, T, r, sigma, gamma, M, N):
         self.K = K
         self.s0 = s0
@@ -123,7 +123,7 @@ class FDMOptionPricing:
         plt.show()
 
 if __name__ == "__main__":
-    option_pricer = FDMOptionPricing(K=15.0, s0=14.0, S_max=60, T=0.5, r=0.1, sigma=0.25, gamma=1, M=100, N=100)
+    option_pricer = OptionPricingImplicit(K=15.0, s0=14.0, S_max=60, T=0.5, r=0.1, sigma=0.25, gamma=1, M=100, N=100)
     option_price = option_pricer.FDM()
     print("European Call Option Price CEV model:", option_price)
     print("European Call Option Price BS model:", option_pricer.bsexact())
@@ -131,7 +131,7 @@ if __name__ == "__main__":
     N_array = np.linspace(10, 1000, 10).astype(int)
     option_pricer.plot_time_vs_N(N_array)
 
-    op = OptionPricing(K=15.0, s0=14.0, S_max=60.0, T=0.5, r=0.1, sigma=0.25, M=100, N=100)
+    op = OptionPricingExplicit(K=15.0, s0=14.0, S_max=60.0, T=0.5, r=0.1, sigma=0.25, M=100, N=100)
     op.plot_error()
 
     option_price = op.explicit(op.M, op.N)
