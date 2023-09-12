@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import special
+import time as time
 
 class Montecarlo:
 
@@ -102,3 +103,27 @@ class Montecarlo:
 
         error = V_calc-V_exact
         return error
+    
+    def plot_time_vs_N(self, N_stop):
+        N_array = np.linspace(10, N_stop, 10).astype(int)
+        time_array = np.zeros(len(N_array))
+        for i in range(len(N_array)):
+            start_time = time.time()
+            self.V_calc(N_array[i], 1000, self.s0)
+            time_array[i] = time.time() - start_time
+        plt.plot(N_array, time_array)
+        plt.show()
+
+        return time_array
+    
+    def plot_error(self, N_stop):
+        N_array = np.linspace(10, N_stop, 10).astype(int)
+        error_array = np.zeros(len(N_array))
+        for i in range(len(N_array)):
+            error_array[i] = self.model_calc_error(N_array[i], 1000, self.s0)
+        plt.plot(N_array, error_array)
+        plt.show()
+
+        return error_array
+    
+    

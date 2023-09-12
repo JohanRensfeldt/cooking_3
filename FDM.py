@@ -37,9 +37,9 @@ class OptionPricingExplicit:
 
         return grid[int(self.s0 / dS), 0]
 
-    def plot_error(self):
-        N_array = np.logspace(1, 3, num=3, base=10).astype(int)
-        M_array = np.logspace(1, 3, num=3, base=10).astype(int)
+    def plot_error(self, M_stop, N_stop, num_points):
+        N_array = np.linspace(10, N_stop, num_points).astype(int)
+        M_array = np.linspace(10, M_stop, num_points).astype(int)
         
         error_array = np.zeros(len(N_array))
         option_price_array = np.zeros(len(N_array))
@@ -49,9 +49,16 @@ class OptionPricingExplicit:
         for i in range(len(N_array)):
             option_price_array[i] = self.explicit(M_array[i], N_array[i])
             error_array[i] = np.abs(option_price_array[i] - b_exact)
+            print("N: ", N_array[i], "M: ", M_array[i], "Error: ", error_array[i])
 
         plt.plot(N_array, error_array)
         plt.show()
+
+        plt.loglog(N_array, error_array)
+        plt.show()
+
+        fit = np.polyfit(np.log(N_array), np.log(error_array), 1)
+        print("Fit: ", fit[0])
 
 class OptionPricingImplicit:
     def __init__(self, K, s0, S_max, T, r, sigma, gamma, M, N):

@@ -2,6 +2,8 @@ from FDM import OptionPricingImplicit
 from FDM import OptionPricingExplicit
 from Montecarlo import Montecarlo
 import numpy as np
+import time as time
+import matplotlib.pyplot as plt
 
 K = 15.0      # Strike price
 s0 = 14.0      # Initial stock price
@@ -30,9 +32,9 @@ if __name__== "__main__":
     option_pricer.plot_time_vs_N(N_array)
 
     op = OptionPricingExplicit(K, s0, S_max, T, r, sigma, M, N)
-    op.plot_error()
+    op.plot_error(100, 1000, 100)
 
     option_price = op.explicit(op.M, op.N)
-    print("European Call Option Price: ", option_price)
+    print("European Call Option Price explicit: ", option_price)
 
 
