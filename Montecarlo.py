@@ -4,7 +4,7 @@ from scipy import special
 
 class Montecarlo:
 
-    def __init__(self, nr_steps, anti, disc_model, K, T, gamma, r, sigma):
+    def __init__(self, nr_steps, K, T, gamma, r, sigma, anti, disc_model):
         self.anti = anti
         self.nr_steps = nr_steps
         self.disc_model = disc_model
@@ -72,8 +72,9 @@ class Montecarlo:
         F = 0.5*s*(1+special.erf(d1/np.sqrt(2)))-np.exp(-R*T)*K*0.5*(1+special.erf(d2/np.sqrt(2)))
         return F
 
-    def V_calc(self, nr_steps,num_runs,dt,S_0):
+    def V_calc(self, nr_steps,num_runs, S_0):
         #Calculate value of stock
+        dt = self.T/nr_steps
         S_vals = np.zeros((num_runs,nr_steps))
         for i in range(num_runs):
             S_vals[i,:] = self.run_simulation(S_0,dt,nr_steps)
@@ -96,7 +97,7 @@ class Montecarlo:
     
     def model_calc_error_diff(self, nr_steps,num_runs,S_0):
         dt = self.T/nr_steps
-        V_calc = self.V_calc(nr_steps,num_runs,dt,S_0)
+        V_calc = self.V_calc(nr_steps,num_runs ,S_0)
         V_exact = self.bsexact(self.sigma,self.r,self.K,self.T,S_0)
 
         error = V_calc-V_exact

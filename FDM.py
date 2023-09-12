@@ -121,18 +121,3 @@ class OptionPricingImplicit:
         plt.ylabel("Time")
         plt.title("Time vs N implicit")
         plt.show()
-
-if __name__ == "__main__":
-    option_pricer = OptionPricingImplicit(K=15.0, s0=14.0, S_max=60, T=0.5, r=0.1, sigma=0.25, gamma=1, M=100, N=100)
-    option_price = option_pricer.FDM()
-    print("European Call Option Price CEV model:", option_price)
-    print("European Call Option Price BS model:", option_pricer.bsexact())
-    
-    N_array = np.linspace(10, 1000, 10).astype(int)
-    option_pricer.plot_time_vs_N(N_array)
-
-    op = OptionPricingExplicit(K=15.0, s0=14.0, S_max=60.0, T=0.5, r=0.1, sigma=0.25, M=100, N=100)
-    op.plot_error()
-
-    option_price = op.explicit(op.M, op.N)
-    print("European Call Option Price: ", option_price)
