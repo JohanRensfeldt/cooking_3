@@ -133,9 +133,11 @@ class OptionPricingImplicit:
 
         return greeks
 
-    def FDM(self, calculateGreeks=True, perturbed_r=None):
+    def FDM(self, calculateGreeks=True, perturbed_r=None, perturbed_sigma=None):
         self.r = perturbed_r if perturbed_r is not None else self.r
-        grid = self.grid_setup()
+        self.sigma = perturbed_sigma if perturbed_sigma is not None else self.sigma
+        grid_tuple = self.grid_setup() 
+        grid = grid_tuple[0]
         
         for j in tqdm(reversed(range(self.N)), desc="Processing", total=self.N, leave=True):
             diag = np.zeros(self.M-1)
@@ -161,6 +163,13 @@ class OptionPricingImplicit:
         if calculateGreeks:
             delta, gamma, theta = self.calculate_greeks(grid)
             original_price = self.FDM(calculateGreeks=False)  # Original FDM without perturbation
+        
+            perturbation_sigma = 0.001  # Add 0.001 to the original volatility
+            perturbed_sigma = self.sigma + perturbation_sigma
+            perturbed_price_sigma = self.FDM(calculateGreeks=False, perturbed_sigma=perturbed_sigma)
+            
+            vega = (perturbed_price_sigma - original_price) / perturbation_sigma
+            
 
             # Perturb interest rate slightly to compute Rho
             perterbation = 0.001
@@ -168,12 +177,13 @@ class OptionPricingImplicit:
             perturbed_price = self.FDM(calculateGreeks=False, perturbed_r=perturbed_r)
             print(f"perturbed_price: {perturbed_price}")
             print(f"original_price: {original_price}")
-            rho = (perturbed_price - original_price) / perterbation  # Use the perturbation value here
+            rho = (perturbed_price - original_price) / perterbation 
 
             print(f"delta: {delta}")
             print(f"gamma: {gamma}")
             print(f"theta: {theta}")
             print(f"rho: {rho}")
+            print(f"vega: {vega}")
             
 
         return grid[int(self.M * self.K / self.S_max), 0]
@@ -225,9 +235,7 @@ class OptionPricingImplicit:
         delta = (V_plus - V_minus) / (2 * self.dS)
         gamma = (V_plus - 2 * V_exact + V_minus) / (self.dS ** 2)
         theta = (V_next_time - V_exact) / self.dt
-        
-        # Additional calculations for Vega, Theta, Rho can be done here
-        
+                
         return delta, gamma, theta
 
 class FDM_Multi_Asset_Option:

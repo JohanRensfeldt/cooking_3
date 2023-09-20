@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import special
-from tqdm import tqdm
 
 class Montecarlo:
 
@@ -24,40 +23,37 @@ class Montecarlo:
         else:
             return S-self.K
 
-    def run_simulation(self, S_0, dt, nr_steps):
+    def run_simulation(self, S_0,dt,nr_steps):
         S = np.zeros(nr_steps)
         S[0] = S_0
-        
-        iterator = tqdm(range(1, nr_steps), desc="Simulating", total=nr_steps-1, leave=True)
-        
         if self.disc_model == 'Euler_Murayama':
             if self.anti:
-                S2 = S.copy()
-                Z = S.copy()
-                for i in iterator:
-                    dW = self.dW(dt)
-                    S[i] = self.Euler_Murayama(S[i-1], dt, dW)
-                    S2[i] = self.Euler_Murayama(S2[i-1], dt, -dW)
-                    Z[i] = (S[i] + S2[i]) / 2
+                S2 = S
+                Z = S
+                for i in range(1,nr_steps):
+                    S[i] = self.Euler_Murayama(S[i-1],dt,self.dW(dt))
+                    S2[i] = self.Euler_Murayama(S2[i-1],dt,-self.dW(dt))
+                    Z[i] = (S[i]+S2[i])/2
                 return Z
             else:
-                for i in iterator:
-                    S[i] = self.Euler_Murayama(S[i-1], dt, self.dW(dt))
+                for i in range(1,nr_steps):
+                    S[i] = self.Euler_Murayama(S[i-1],dt,self.dW(dt))
                 return S
         elif self.disc_model == 'Milstein':
             if self.anti:
-                S2 = S.copy()
-                Z = S.copy()
-                for i in iterator:
+                S2 = S
+                Z = S
+                for i in range(1,nr_steps):
                     dW = self.dW(dt)
-                    S[i] = self.Milstein(S[i-1], dt, dW)
-                    S2[i] = self.Milstein(S2[i-1], dt, -dW)
-                    Z[i] = (S[i] + S2[i]) / 2
+                    S[i] = self.Milstein(S[i-1],dt, dW)
+                    S2[i] = self.Milstein(S2[i-1],dt,-dW)
+                    Z[i] = (S[i]+S2[i])/2
                 return Z
             else:
-                for i in iterator:
-                    S[i] = self.Milstein(S[i-1], dt, self.dW(dt))
+                for i in range(1,nr_steps):
+                    S[i] = self.Milstein(S[i-1],dt,self.dW(dt))
                 return S
+
         else:
             raise Exception('Unsupported discretization model')
         
@@ -211,7 +207,7 @@ class MontecarloMultiAsset:
         for i in range(num_runs):
             V_vals[i] = self.eu_basket_val(S_vals[i, -1, :])
 
-        V = np.exp(-self.r * self.T) * np.mean(V_vals)
+        V = np.exp(-self.r[0] * self.T) * np.mean(V_vals)
         return V
     
     def bsexact(self, sigma: float, R: float, K: float, T: float, s: float):
