@@ -7,9 +7,9 @@ import numpy as np
 
 multi_asset_montecarlo = False
 multi_asset_FDM = False
-montecarlo = False
+montecarlo = True
 montecarloGreeks = False
-FDM = True
+FDM = False
 
 if __name__ == "__main__":
     
@@ -52,6 +52,8 @@ if __name__ == "__main__":
 
         montecarlo = Montecarlo(N, K, T, gamma, r, sigma, anti = True, disc_model = 'Milstein')
         price = montecarlo.V_calc(N ,M,s0)
+        convergence_rate = montecarlo.convergence_rate()
+
         print("European Call Option Price montecarlo: ", price)
         error = montecarlo.model_calc_error_diff(N, M, s0)
         print("Error montecarlo: ", error)
@@ -69,6 +71,9 @@ if __name__ == "__main__":
 
         option_price = op.explicit(op.M, op.N)
         print("European Call Option Price: ", option_price)
+
+        print("*****************************")
+        print(f"Convergence rate: {convergence_rate}")
     
     elif montecarloGreeks:
 

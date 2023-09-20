@@ -142,6 +142,26 @@ class Montecarlo:
         V_down = self.V_calc(self.nr_steps, num_runs, S_0)
         self.r = original_r  # Resetting to original r
         return (V_up - V_down) / (2 * bump)
+    
+    def convergence_rate(self):
+        num_runs = 1000
+        S_0 = 14.0
+        num_levels = 10  # Number of refinement levels
+        V_exact = self.bsexact(self.sigma, self.r, self.K, self.T, S_0)  # Exact solution
+        errors = np.zeros(num_levels)
+        dt_values = np.zeros(num_levels)
+        
+        for i in range(num_levels):
+            dt = self.T / self.nr_steps
+            dt_values[i] = dt  # Store time step size
+            V_calc = self.V_calc(self.nr_steps, num_runs, S_0)  # Monte Carlo estimate
+            errors[i] = np.abs((V_calc - V_exact) / V_exact)  # Relative error
+            self.nr_steps *= 2  # Refine mesh by doubling the number of steps
+
+        # Compute the estimated convergence rate for each refinement level
+        r_values = np.log(errors[1:] / errors[:-1]) / np.log(dt_values[1:] / dt_values[:-1])
+        print("Estimated convergence rates:", r_values)
+        return np.mean(r_values)
 
 
 class MontecarloMultiAsset:
