@@ -7,8 +7,8 @@ import numpy as np
 
 multi_asset_montecarlo = False
 multi_asset_FDM = False
-montecarlo = True
-montecarloGreeks = False
+montecarlo = False
+montecarloGreeks = True
 FDM = False
 
 if __name__ == "__main__":

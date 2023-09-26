@@ -103,7 +103,7 @@ class Montecarlo:
         error = V_calc-V_exact
         return error
     
-    def delta(self, S_0, num_runs, bump=0.01):
+    def delta(self, S_0, num_runs, bump=0.05):
         # Calculate option value for bumped up and down initial stock prices
         V_up = self.V_calc(self.nr_steps, num_runs, S_0 + bump)
         print(f'V_up: {V_up}')
